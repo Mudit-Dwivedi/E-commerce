@@ -22,12 +22,28 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS configuration
-const corsOptions = {
-  origin: "http://localhost:3000",
-  "https://muditse-commerce.netlify.app/",
-  credentials: true,
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: "http://localhost:3000",
+//   "https://muditse-commerce.netlify.app/",
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://muditse-commerce.netlify.app",
+];
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like from Postman) or matching origins
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: 'GET,POST,PUT,PATCH,DELETE',
+    credentials: true
+}));
 
 // API routes
 app.use("/user", userRouter); // User routes

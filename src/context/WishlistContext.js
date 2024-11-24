@@ -9,6 +9,20 @@ export const WishlistProvider = ({ children }) => {
     return storedWishlist ? JSON.parse(storedWishlist) : [];  // Default to empty array if nothing in localStorage
   });
 
+  useEffect(() => {
+    const storedWishlist = localStorage.getItem('wishlist');
+    if (storedWishlist) {
+      setWishlist(JSON.parse(storedWishlist));
+    }
+  }, []);
+
+
+  useEffect(() => {
+    if (wishlist.length > 0) {
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    }
+  }, [wishlist]);
+
   const addToWishlist = (item) => {
     setWishlist((prevWishlist) => {
       const isItemInWishlist = prevWishlist.some(
@@ -56,6 +70,7 @@ export const WishlistProvider = ({ children }) => {
         addToWishlist,
         removeFromWishlist,
         clearUser,
+        setWishlist,
         setUser: setUserId,
       }}
     >

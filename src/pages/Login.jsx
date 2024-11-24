@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
+import { useWishlist } from '../context/WishlistContext'; 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
+  const { setWishlist } = useWishlist()
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -27,6 +27,7 @@ function Login() {
         localStorage.setItem('authToken', data.token);
         if (Array.isArray(data.wishlist)) {
           localStorage.setItem('wishlist', JSON.stringify(data.wishlist));
+          setWishlist(data.wishlist); 
           console.log("Wishlist saved:", data.wishlist); // Debug wishlist
         }
 

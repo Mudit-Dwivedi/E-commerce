@@ -4,17 +4,16 @@ import { User } from "../models/userModel.js";
 // import { createToken } from "../utils/jwt.js";
 import jwt from 'jsonwebtoken';
 
+
 //login
 export const Login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-
     // Function to create a JWT token
     const createToken = (data) => {
-        return jwt.sign({ id: data.id }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
-      };
-      
+      return jwt.sign({ id: data.id }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
+    };
 
     if (!email || !password) {
       return res.status(401).json({
@@ -43,13 +42,16 @@ export const Login = async (req, res) => {
 
     const token = createToken({ id: user.id });
 
+    // Dynamically set secure based on the environment
+    const isProduction = process.env.NODE_ENV === "production";
+
     return res
       .status(200)
       .cookie("token", token, {
         httpOnly: true,
         maxAge: 86400000, // 1 day
-        secure: false, // Set true in production for HTTPS
-        sameSite: "Strict",
+        secure: isProduction, // Use secure only in production
+        sameSite: isProduction ? "Strict" : "Lax", // Adjust sameSite policy for production
         path: "/",
       })
       .json({
@@ -113,12 +115,15 @@ export const Logout = async (req, res) => {
   try {
     console.log("Logout attempt by user:", req.user);
 
+    // Dynamically set secure based on the environment
+    const isProduction = process.env.NODE_ENV === "production";
+
     // Clear the cookie unconditionally
     res.cookie("token", "", {
       httpOnly: true,
       expires: new Date(0),
-      secure: false,
-      sameSite: "Strict",
+      secure: isProduction, // Use secure only in production
+      sameSite: isProduction ? "Strict" : "Lax", // Adjust sameSite policy for production
       path: "/",
     });
 

@@ -24,6 +24,7 @@ app.use(cookieParser());
 // CORS configuration
 const corsOptions = {
   origin: "http://localhost:3000",
+  "https://muditse-commerce.netlify.app/",
   credentials: true,
 };
 app.use(cors(corsOptions));
